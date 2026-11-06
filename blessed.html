@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Car Racing Game</title>
+
+    <style>
+        body {
+            background: #111;
+            color: white;
+            text-align: center;
+            font-family: Arial;
+        }
+
+        h1 {
+            color: gold;
+        }
+
+        #game {
+            width: 300px;
+            height: 450px;
+            background: #444;
+            margin: auto;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid white;
+        }
+
+        #car {
+            position: absolute;
+            bottom: 20px;
+            left: 125px;
+            font-size: 40px;
+        }
+
+        #enemy {
+            position: absolute;
+            top: -50px;
+            left: 60px;
+            font-size: 40px;
+        }
+
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            background: gold;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🏎️ CAR RACING</h1>
+<h2>Score: <span id="score">0</span></h2>
+
+<div id="game">
+    <div id="car">🏎️</div>
+    <div id="enemy">🚙</div>
+</div>
+
+<button onclick="moveLeft()">⬅ LEFT</button>
+<button onclick="moveRight()">RIGHT ➡</button>
+<br>
+<button onclick="restart()">RESTART</button>
+
+<h2 id="message"></h2>
+
+<script>
+    let car = document.getElementById("car");
+    let enemy = document.getElementById("enemy");
+    let scoreText = document.getElementById("score");
+    let message = document.getElementById("message");
+
+    let carPosition = 125;
+    let enemyPosition = -50;
+    let enemyLeft = 60;
+    let score = 0;
+    let playing = true;
+
+    function moveLeft() {
+        if (playing && carPosition > 0) {
+            carPosition -= 25;
+            car.style.left = carPosition + "px";
+        }
+    }
+
+    function moveRight() {
+        if (playing && carPosition < 250) {
+            carPosition += 25;
+            car.style.left = carPosition + "px";
+        }
+    }
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "ArrowLeft") moveLeft();
+        if (e.key === "ArrowRight") moveRight();
+    });
+
+    function gameLoop() {
+        if (!playing) return;
+
+        enemyPosition += 5;
+
+        if (enemyPosition > 450) {
+            enemyPosition = -50;
+            enemyLeft = Math.floor(Math.random() * 250);
+            enemy.style.left = enemyLeft + "px";
+            score++;
+            scoreText.textContent = score;
+        }
+
+        enemy.style.top = enemyPosition + "px";
+
+        if (
+            enemyPosition > 350 &&
+            enemyPosition < 420 &&
+            Math.abs(carPosition - enemyLeft) < 35
+        ) {
+            playing = false;
+            message.textContent = "💥 GAME OVER!";
+        }
+
+        if (playing) {
+            setTimeout(gameLoop, 30);
+        }
+    }
+
+    function restart() {
+        carPosition = 125;
+        enemyPosition = -50;
+        score = 0;
+        playing = true;
+
+        car.style.left = "125px";
+        enemy.style.top = "-50px";
+        scoreText.textContent = 0;
+        message.textContent = "";
+
+        gameLoop();
+    }
+
+    gameLoop();
+</script>
+
+</body>
+</html>
